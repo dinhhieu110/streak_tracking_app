@@ -46,6 +46,11 @@ const AddHabitScreen = () => {
       } else {
         setError('An unknown error occurred')
       }
+    } finally {
+      setTitle('')
+      setDescription('')
+      setFrequency('daily')
+      setError(null)
     }
   }
   return (
