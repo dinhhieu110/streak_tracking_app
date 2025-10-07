@@ -3,6 +3,7 @@ import {
   client,
   DATABASE_ID,
   databases,
+  HABIT_COMPLETION_TABLE_ID,
   HABITS_TABLE_ID,
   RealtimeResponse,
 } from '@/lib/appwrite'
@@ -10,7 +11,7 @@ import { IHabit } from '@/types/database.type'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useEffect, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import { Query } from 'react-native-appwrite'
+import { ID, Query } from 'react-native-appwrite'
 import { Swipeable } from 'react-native-gesture-handler'
 import { Button, Surface, Text } from 'react-native-paper'
 
@@ -90,7 +91,30 @@ export default function Index() {
     </View>
   )
 
-  const handleCompleteHabit = async (habitId: string) => {}
+  const handleCompleteHabit = async (habitId: string) => {
+    if (!user) return
+    try {
+      const currentDate = new Date().toISOString()
+      await databases.createDocument(
+        DATABASE_ID,
+        HABIT_COMPLETION_TABLE_ID,
+        ID.unique(),
+        {
+          user_id: user?.$id,
+          completed_at: currentDate,
+          habit_id: habitId,
+        }
+      )
+      const habit = habits?.find((h) => h.$id === habitId)
+      if (!habit) return
+      await databases.updateDocument(DATABASE_ID, HABITS_TABLE_ID, habitId, {
+        streak_count: habit.streak_count + 1,
+        last_completed: currentDate,
+      })
+    } catch (error) {
+      console.error('Error handling habit:', error)
+    }
+  }
 
   return (
     <View style={styles.container}>

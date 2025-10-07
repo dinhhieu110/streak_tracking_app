@@ -17,7 +17,8 @@ export const databases = new Databases(client)
 
 export const DATABASE_ID = process.env.EXPO_PUBLIC_APPWRITE_DB_ID!
 export const HABITS_TABLE_ID = process.env.EXPO_PUBLIC_HABITS_TABLE_ID!
-
+export const HABIT_COMPLETION_TABLE_ID =
+  process.env.EXPO_PUBLIC_HABIT_COMPLETION_TABLE_ID!
 export interface RealtimeResponse<T> {
   events: string[]
   payload: T
